@@ -1,0 +1,6 @@
+TODO:
+- Command list
+- Usage writeup
+- Cleanup
+- Progress tracer
+- Container to migrate to Docker
