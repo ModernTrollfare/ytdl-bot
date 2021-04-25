@@ -28,9 +28,12 @@ def invokeDownloader(cbContext):
     ydlWrapper.startDownload();
     resultDict = ydlWrapper.getStatus();
     if resultDict['status'] == 'finished':
-        botContext.bot.send_message(chat_id=update.effective_chat.id, text=("Done downloading %s!" % context['query']))
+        botContext.bot.send_message(chat_id=update.effective_chat.id, text=("Done downloading %s! Now uploading...." % context['query']))
         with open(resultDict['filename'], 'rb') as fb:
-            botContext.bot.send_document(chat_id=update.effective_chat.id, document=fb, filename='music.mp3', timeout=50)
+            try:
+                botContext.bot.send_document(chat_id=update.effective_chat.id, document=fb, filename='music.mp3', timeout=600)
+            except telegram.error.TelegramError:
+                botContext.bot.send_message(chat_id=update.effective_chat.id, text=("Error sending %s! :(" % context['query']))
     elif resultDict['status'] == 'error':
         botContext.bot.send_message(chat_id=update.effective_chat.id, text=("Failed downloading %s!" % context['query']))
     ydlWrapper.cleanup()
