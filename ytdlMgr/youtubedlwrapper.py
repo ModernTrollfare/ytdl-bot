@@ -10,17 +10,18 @@ class YoutubeDownloadWrapper:
 	@classmethod
 	def alreadyExistingJob(cls, query, uid):
 		for x in cls.__runningJobs:
-			if x.uid == uid and x.query == query:
+			if YoutubeDownloadWrapper.__runningJobs[x].uid == uid and YoutubeDownloadWrapper.__runningJobs[x].query == query:
 				return True
 		return False
 
 	def setDownloadParam(self, query, uid):
-		self.jobName = query;
-		self.uid = uid;
-		YoutubeDownloadWrapper.__runningJobs[query] = self
 		basename = str(uuid.uuid4())
+		self.jobName = query+"___"+basename;
+		self.query = query
+		self.uid = uid;
 		self.ydl_opts['outtmpl'] = basename+".%(ext)s";
 		self.outfilename = basename+".mp3"
+		YoutubeDownloadWrapper.__runningJobs[query] = self
 
 	def startDownload(self):
 		try:
@@ -46,12 +47,12 @@ class YoutubeDownloadWrapper:
 			if status['total_bytes'] != None:
 				if status['total_bytes'] > 20*1024*1024:
 					self.errorStr = "Filesize is greater than 20MB - Size %d" % (status['total_bytes'])
-					YoutubeDownloadWrapper.__runningJobs['query'] = self
+					YoutubeDownloadWrapper.__runningJobs[self.jobName] = self
 					raise ValueError("Filesize too large")
 			elif status['total_bytes_estimate'] != None:
 				if status['total_bytes_estimate'] > 20*1024*1024:
 					self.errorStr = "Filesize is greater than 20MB - Estimated size %d" % (status['total_bytes'])
-					YoutubeDownloadWrapper.__runningJobs['query'] = self
+					YoutubeDownloadWrapper.__runningJobs[self.jobName] = self
 					raise ValueError("Filesize too large")
 			#No problem
 			self.progress = """Downloading:
@@ -62,7 +63,7 @@ class YoutubeDownloadWrapper:
 			self.preconvfilename = status['filename']
 		elif self.status == 'error':
 			self.errorStr = "Error occurred during download."
-		YoutubeDownloadWrapper.__runningJobs['query'] = self
+		YoutubeDownloadWrapper.__runningJobs[self.jobName] = self
 
 	def getStatus(self):
 		if self.status == 'error':
@@ -120,6 +121,7 @@ class YoutubeDownloadWrapper:
 		self.preconvfilename = ""
 		self.dlpartfilename = ""
 		self.outfilename = ""
+		self.query = ""
 
 		self.ydl_opts = {
 		#'download_archive' : 'assets.log',

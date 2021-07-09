@@ -6,11 +6,14 @@ from pathlib import Path
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(update, context):
     """Send a message when the command /start is issued."""
-    update.message.reply_text('Hi!')
+    update.message.reply_text("""Currently we are only supporting /download as the only command.
+        send '/download' to see what you can do with it!""")
+    #update.message.reply_text('Hi!')
 
 def help(update, context):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('Help!')
+    update.message.reply_text("""Currently we are only supporting /download as the only command.
+        send '/download' to see what you can do with it!""")
 
 def invokeDownloader(cbContext):
     context = cbContext.job.context
@@ -69,13 +72,11 @@ def download(update, context):
 
 def seejobs(update,context):
     print(context.job_queue)
-    update.message.reply_text("""on99""")
-
 
 handlers = { "start" : start,
              "help" : help,
-             "download" : download,
-             "jobs" : seejobs
+             "download" : download
+             #"jobs" : seejobs
              }
 
 from telegram.ext import CommandHandler, MessageHandler, Filters

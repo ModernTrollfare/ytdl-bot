@@ -55,6 +55,13 @@ def main():
     #Error handler
     ErrorHandler.init(dp)
 
+    # Set the bot's list of commands
+    # TODO: move to handlers
+    cmdlist = [ ('/start', 'Get started with this bot.'),
+                ('/help', 'See all available commands and descriptions'),
+                ('/download', 'Start downloading your own music!')]
+
+    updater.bot.set_my_commands(cmdlist)
     # Start the Bot
     updater.start_polling()
 
